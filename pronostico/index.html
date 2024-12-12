@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pronostico App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe);
+            color: #fff;
+            text-align: center;
+        }
+
+        header {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .weather-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1rem;
+            width: 80%;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #0066ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #004c99;
+        }
+
+        .weather-info {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pronostico del Tiempo </h1>
+    </header>
+
+    <div class="weather-container">
+        <div class="input-group">
+            <input type="text" id="cityInput" placeholder="Ingrese nombre de la ciudad" />
+            <button id="getWeather">Obtener Pronostico</button>
+        </div>
+        <div id="weatherInfo" class="weather-info"></div>
+    </div>
+
+    <script>
+        document.getElementById('getWeather').addEventListener('click', async () => {
+            const city = document.getElementById('cityInput').value;
+            const weatherInfoDiv = document.getElementById('weatherInfo');
+
+            if (!city) {
+                weatherInfoDiv.textContent = 'Por favor ingrese el nombre de la ciudad.';
+                return;
+            }
+
+            const apiKey = '72df6ceffcff9419d9af48500d0978ef'; // API key
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=es`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Ciudad no encontrada');
+
+                const data = await response.json();
+                const { main, weather, name } = data;
+                weatherInfoDiv.innerHTML = `
+                    <h2>${name}</h2>
+                    <p>${weather[0].description}</p>
+                    <p>Temperatura: ${main.temp}°C</p>
+                    <p>Sensacion Termica: ${main.feels_like}°C</p>
+                `;
+            } catch (error) {
+                weatherInfoDiv.textContent = 'Error al obtener datos meteorológicos. Por favor inténtalo de nuevo.';
+            }
+        });
+    </script>
+</body>
+</html>
